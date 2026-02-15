@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relevé de Notes S3 - SUPNUM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex; justify-content: center;
+        }
+        .container {
+            max-width: 900px; width: 100%;
+            background: white; border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden; margin: 10px auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white; padding: 30px 20px; text-align: center;
+        }
+        .student-info { background: #f8f9fa; padding: 20px; border-bottom: 3px solid #e9ecef; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .info-card { background: white; padding: 15px; border-radius: 10px; border-left: 4px solid #007bff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .info-card h3 { font-size: 0.8em; text-transform: uppercase; color: #343a40; margin-bottom: 5px; }
+        .info-card p { color: #007bff; font-size: 1.1em; font-weight: bold; }
+        .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .summary-card { background: white; padding: 12px 8px; border-radius: 10px; text-align: center; border: 2px solid #e9ecef; }
+        .summary-card.moyenne { border-color: {% if note.moy_general < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+        .summary-card.decision { border-color: {% if note.decision == 'Admis(e)' or note.decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card .value { font-size: 1.2em; font-weight: bold; }
+
+        .content { padding: 20px 15px; }
+        .department { margin-bottom: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .dept-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .table-container { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+        th { background: #f8f9fa; padding: 12px 8px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #dee2e6; color: #333; }
+        td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; }
+        .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
+        .decision-badge { font-weight: bold; padding: 4px 8px; border-radius: 5px; font-size: 0.75em; display: inline-block; min-width: 35px; }
+        .V, .C { background: #d4edda; color: #155724; }
+        .CI, .CE { background: #fff3cd; color: #856404; }
+        .NC, .NV { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Relevé de Notes - Semestre 3</h1>
+            <p>SUPNUM • 2024-2025</p>
+        </div>
+
+        <div class="student-info">
+            <div class="info-grid">
+                <div class="info-card"><h3>Étudiant</h3><p>{{ note.prenom }} {{ note.nom }}</p></div>
+                <div class="info-card"><h3>Matricule</h3><p>{{ note.matricule }}</p></div>
+                <div class="info-card"><h3>Département</h3><p>{{ note.dept }}</p></div>
+            </div>
+            <div class="summary-cards">
+                <div class="summary-card moyenne"><h4>Moyenne</h4><div class="value">{{ note.moy_general }}</div></div>
+                <div class="summary-card"><h4>Crédits</h4><div class="value">{{ note.credit_total }}</div></div>
+                <div class="summary-card decision"><h4>Décision</h4><div class="value">{{ note.decision }}</div></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="department">
+                <div class="dept-header">
+                    <div style="padding: 10px;">DPR3: Développement personnel</div>
+                    <div style="padding: 10px;">MOY UE: {{ note.moyenne_ue1 }} | DÉC: {{ note.ue1_valide }}</div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Français</td><td>{{ note.ncc_fr }}</td><td>{{ note.nsn_fr }}</td><td>{{ note.nsr_fr }}</td><td>{{ note.moy_fr }}</td><td><span class="decision-badge {{ note.capit_fr }}">{{ note.capit_fr }}</span></td></tr>
+                            <tr><td class="subject-name">Anglais</td><td>{{ note.ncc_an }}</td><td>{{ note.nsn_an }}</td><td>{{ note.nsr_an }}</td><td>{{ note.moy_an }}</td><td><span class="decision-badge {{ note.capit_an }}">{{ note.capit_an }}</span></td></tr>
+                            <tr><td class="subject-name">PPP</td><td>{{ note.ncc_ppp }}</td><td>{{ note.nsn_ppp }}</td><td>{{ note.nsr_ppp }}</td><td>{{ note.moy_ppp }}</td><td><span class="decision-badge {{ note.capit_ppp }}">{{ note.capit_ppp }}</span></td></tr>
+                            <tr><td class="subject-name">Gestion d'entreprise</td><td>{{ note.ncc_ges }}</td><td>{{ note.nsn_ges }}</td><td>{{ note.nsr_ges }}</td><td>{{ note.moy_ges }}</td><td><span class="decision-badge {{ note.capit_ges }}">{{ note.capit_ges }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+    <div class="dept-header">
+        <div style="padding: 10px;">DAS2: Science des données</div>
+        <div style="padding: 10px;">
+            MOY UE: {{ note.moyenne_ue2 }} | DÉC: {{ note.ue2_valide }}
+        </div>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>MATIÈRE</th>
+                    <th>DEVOIR</th>
+                    <th>EXAMEN</th>
+                    <th>RATTRAPAGE</th>
+                    <th>MOYENNE</th>
+                    <th>DÉCISION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="subject-name">Machine Learning (Python)</td>
+                    <td>{{ note.ncc_py }}</td>
+                    <td>{{ note.nsn_py }}</td>
+                    <td>{{ note.nsr_py }}</td>
+                    <td class="grade"><b>{{ note.moy_py }}</b></td>
+                    <td>
+                        <span class="decision-badge {{ note.capit_py }}">
+                            {{ note.capit_py }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subject-name">Recherche Opérationnelle</td>
+                    <td>{{ note.ncc_lw }}</td>
+                    <td>{{ note.nsn_lw }}</td>
+                    <td>{{ note.nsr_lw }}</td>
+                    <td class="grade"><b>{{ note.moy_lw }}</b></td>
+                    <td>
+                        <span class="decision-badge {{ note.capit_lw }}">
+                            {{ note.capit_lw }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div style="padding: 10px;">MAI2: Programmation avancée</div>
+                    <div style="padding: 10px;">MOY UE: {{ note.moyenne_ue3 }} | DÉC: {{ note.ue3_valide }}</div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">POO Java</td><td>{{ note.ncc_al }}</td><td>{{ note.nsn_al }}</td><td>{{ note.nsr_al }}</td><td>{{ note.moy_al }}</td><td><span class="decision-badge {{ note.capit_al }}">{{ note.capit_al }}</span></td></tr>
+                            <tr><td class="subject-name">Structure de données</td><td>{{ note.ncc_pr }}</td><td>{{ note.nsn_pr }}</td><td>{{ note.nsr_pr }}</td><td>{{ note.moy_pr }}</td><td><span class="decision-badge {{ note.capit_pr }}">{{ note.capit_pr }}</span></td></tr>
+                            <tr><td class="subject-name">PI avancé</td><td>{{ note.ncc_pix }}</td><td>{{ note.nsn_pix }}</td><td>{{ note.nsr_pix }}</td><td>{{ note.moy_pix }}</td><td><span class="decision-badge {{ note.capit_pix }}">{{ note.capit_pix }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div style="padding: 10px;">SYR2: Architecture et Systèmes</div>
+                    <div style="padding: 10px;">MOY UE: {{ note.moyenne_ue4 }} | DÉC: {{ note.ue4_valide }}</div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Génie Log / Res Mob</td><td>{{ note.ncc_sl }}</td><td>{{ note.nsn_sl }}</td><td>{{ note.nsr_sl }}</td><td>{{ note.moy_sl }}</td><td><span class="decision-badge {{ note.capit_sl }}">{{ note.capit_sl }}</span></td></tr>
+                            <tr><td class="subject-name">Oracle / Systèmes</td><td>{{ note.ncc_se }}</td><td>{{ note.nsn_se }}</td><td>{{ note.nsr_se }}</td><td>{{ note.moy_se }}</td><td><span class="decision-badge {{ note.capit_se }}">{{ note.capit_se }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div style="padding: 10px;">DSI2: Module de spécialité</div>
+                    <div style="padding: 10px;">MOY UE: {{ note.moyenne_ue5 }} | DÉC: {{ note.ue5_valide }}</div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Python / Sécurité</td><td>{{ note.ncc_sp }}</td><td>{{ note.nsn_sp }}</td><td>{{ note.nsr_sp }}</td><td>{{ note.moy_sp }}</td><td><span class="decision-badge {{ note.capit_sp }}">{{ note.capit_sp }}</span></td></tr>
+                            <tr><td class="subject-name">DevOps / BD NoSQL</td><td>{{ note.ncc_pri }}</td><td>{{ note.nsn_pri }}</td><td>{{ note.nsr_pri }}</td><td>{{ note.moy_pri }}</td><td><span class="decision-badge {{ note.capit_pri }}">{{ note.capit_pri }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relevé de Notes S2 - SUPNUM</title>
+    <style>
+        /* DESIGN INITIAL & RESPONSIVE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin: 10px auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .student-info { background: #f8f9fa; padding: 20px; border-bottom: 3px solid #e9ecef; }
+        
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-bottom: 20px; 
+        }
+
+        .info-card {
+            background: white; padding: 15px; border-radius: 10px;
+            border-left: 4px solid #007bff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .info-card h3 { font-size: 0.8em; text-transform: uppercase; color: #343a40; margin-bottom: 5px; }
+        .info-card p { color: #007bff; font-size: 1.1em; font-weight: bold; }
+
+        .summary-cards { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+        }
+
+        .summary-card {
+            background: white; padding: 12px 8px; border-radius: 10px;
+            text-align: center; border: 2px solid #e9ecef;
+        }
+
+        /* BORDURES DYNAMIQUES SELON LA MOYENNE */
+        .summary-card.moyenne { border-color: {% if note.moy_general < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+        .summary-card.decision { border-color: {% if note.decision == 'Admis(e)' or note.decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card .value { font-size: 1.2em; font-weight: bold; }
+
+        .content { padding: 20px 15px; }
+
+        .department { margin-bottom: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        .dept-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 10px;
+        }
+
+        .table-container { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+        th { background: #f8f9fa; padding: 12px 8px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #dee2e6; color: #333; }
+        td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; }
+        
+        .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
+
+        /* BADGES DE DÉCISION */
+        .decision { font-weight: bold; padding: 4px 8px; border-radius: 5px; font-size: 0.75em; display: inline-block; min-width: 35px; }
+        .V, .C { background: #d4edda; color: #155724; }
+        .CI, .CE { background: #fff3cd; color: #856404; }
+        .NC, .NV { background: #f8d7da; color: #721c24; }
+
+        @media (max-width: 600px) {
+            .summary-cards { grid-template-columns: 1fr; }
+            .dept-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Relevé de Notes - Semestre 2</h1>
+            <p>SUPNUM • Année 2024-2025</p>
+        </div>
+
+        <div class="student-info">
+            <div class="info-grid">
+                <div class="info-card"><h3>Étudiant</h3><p>{{ note.prenom }} {{ note.nom }}</p></div>
+                <div class="info-card"><h3>Matricule</h3><p>{{ note.matricule }}</p></div>
+                <div class="info-card"><h3>Département</h3><p>{{ note.dept }}</p></div>
+            </div>
+
+            <div class="summary-cards">
+                <div class="summary-card moyenne">
+                    <h4>Moyenne</h4>
+                    <div class="value">{{ note.moy_general }}</div>
+                </div>
+                <div class="summary-card">
+                    <h4>Crédits</h4>
+                    <div class="value">{{ note.credit_total }}</div>
+                </div>
+                <div class="summary-card decision">
+                    <h4>Décision</h4>
+                    <div class="value">{{ note.decision }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">DPR2: Développement personnel 2</div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue1 }}</span> | <span>DÉC: {{ note.ue1_valide }}</span></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Français</td><td>{{ note.ncc_dpr210 }}</td><td>{{ note.nsn_dpr210 }}</td><td>{{ note.nsr_dpr210|default:"0.00" }}</td><td>{{ note.moy_dpr210 }}</td><td><span class="decision {{ note.capit_pr210 }}">{{ note.capit_pr210 }}</span></td></tr>
+                            <tr><td class="subject-name">Anglais</td><td>{{ note.ncc_dpr211 }}</td><td>{{ note.nsn_dpr211 }}</td><td>{{ note.nsr_dpr211|default:"0.00" }}</td><td>{{ note.moy_dpr211 }}</td><td><span class="decision {{ note.capit_dpr211 }}">{{ note.capit_dpr211 }}</span></td></tr>
+                            <tr><td class="subject-name">PPP</td><td>{{ note.ncc_dpr212 }}</td><td>{{ note.nsn_dpr212 }}</td><td>{{ note.nsr_dpr212|default:"0.00" }}</td><td>{{ note.moy_dpr212 }}</td><td><span class="decision {{ note.capit_dpr212 }}">{{ note.capit_dpr212 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">DEV2: Programmation et Développement 2</div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue2 }}</span> | <span>DÉC: {{ note.ue2_valide }}</span></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Python</td><td>{{ note.ncc_dev210 }}</td><td>{{ note.nsn_dev210 }}</td><td>{{ note.nsr_dev210|default:"0.00" }}</td><td>{{ note.moy_dev210 }}</td><td><span class="decision {{ note.capit_dev210 }}">{{ note.capit_dev210 }}</span></td></tr>
+                            <tr><td class="subject-name">Langage Web</td><td>{{ note.ncc_dev211 }}</td><td>{{ note.nsn_dev211 }}</td><td>{{ note.nsr_dev211|default:"0.00" }}</td><td>{{ note.moy_dev211 }}</td><td><span class="decision {{ note.capit_dev211 }}">{{ note.capit_dev211 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">MAI2: Outils Mathématiques 2</div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue3 }}</span> | <span>DÉC: {{ note.ue3_valide }}</span></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Algèbre</td><td>{{ note.ncc_mai210 }}</td><td>{{ note.nsn_mai210 }}</td><td>{{ note.nsr_mai210|default:"0.00" }}</td><td>{{ note.moy_mai210 }}</td><td><span class="decision {{ note.capit_mai210 }}">{{ note.capit_mai210 }}</span></td></tr>
+                            <tr><td class="subject-name">Probabilités</td><td>{{ note.ncc_mai211 }}</td><td>{{ note.nsn_mai211 }}</td><td>{{ note.nsr_mai211|default:"0.00" }}</td><td>{{ note.moy_mai211 }}</td><td><span class="decision {{ note.capit_mai211 }}">{{ note.capit_mai211 }}</span></td></tr>
+                            <tr><td class="subject-name">Pix</td><td>{{ note.ncc_mai212 }}</td><td>{{ note.nsn_mai212 }}</td><td>{{ note.nsr_mai212|default:"0.00" }}</td><td>{{ note.moy_mai212 }}</td><td><span class="decision {{ note.capit_mai212 }}">{{ note.capit_mai212 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">SYR2: Architecture et Systèmes</div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue4 }}</span> | <span>DÉC: {{ note.ue4_valide }}</span></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Système Logique</td><td>{{ note.ncc_syr210 }}</td><td>{{ note.nsn_syr210 }}</td><td>{{ note.nsr_syr210|default:"0.00" }}</td><td>{{ note.moy_syr210 }}</td><td><span class="decision {{ note.capit_syr210 }}">{{ note.capit_syr210 }}</span></td></tr>
+                            <tr><td class="subject-name">Système d'exploitation</td><td>{{ note.ncc_syr211 }}</td><td>{{ note.nsn_syr211 }}</td><td>{{ note.nsr_syr211|default:"0.00" }}</td><td>{{ note.moy_syr211 }}</td><td><span class="decision {{ note.capit_syr211 }}">{{ note.capit_syr211 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">DSI2: Module de spécialité</div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue5 }}</span> | <span>DÉC: {{ note.ue5_valide }}</span></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">SGBD/Réseaux/CNM</td><td>{{ note.ncc_dsi210 }}</td><td>{{ note.nsn_dsi210 }}</td><td>{{ note.nsr_dsi210|default:"0.00" }}</td><td>{{ note.moy_dsi210 }}</td><td><span class="decision {{ note.capit_dsi210 }}">{{ note.capit_dsi210 }}</span></td></tr>
+                            <tr><td class="subject-name">Projet Intégrateur</td><td>{{ note.ncc_dsi211 }}</td><td>{{ note.nsn_dsi211 }}</td><td>{{ note.nsr_dsi211|default:"0.00" }}</td><td>{{ note.moy_dsi211 }}</td><td><span class="decision {{ note.capit_dsi211 }}">{{ note.capit_dsi211 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> 
+    </div>
+</body>
+</html>
