@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-!_5ei2t5@6e!rdaaony$p3feph-!8&2c7)w@h#b*xrabs7!=vs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -73,15 +73,18 @@ WSGI_APPLICATION = 'resultats.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'notes_supnum',
-        'USER': 'root',
-        'PASSWORD': '',  # Laissez vide si pas de mot de passe
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
+ 'default': {
+  'ENGINE': 'django.db.backends.mysql',
+  'NAME': os.getenv('MYSQLDATABASE'),
+  'USER': os.getenv('MYSQLUSER'),
+  'PASSWORD': os.getenv('MYSQLPASSWORD'),
+  'HOST': os.getenv('MYSQLHOST'),
+  'PORT': os.getenv('MYSQLPORT'),
+ }
 }
 
 
@@ -120,6 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Patch pour MariaDB 10.4
 from django.db.backends.mysql import base
