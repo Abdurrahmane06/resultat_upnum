@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relevé de Notes - SUPNUM</title>
     <style>
-        /* DESIGN INITIAL & RESPONSIVE */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -27,89 +26,170 @@
             margin: 10px auto;
         }
 
+        /* ── HEADER ── */
         .header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 30px 20px;
             text-align: center;
         }
+        .header h1 { font-size: 1.6em; font-weight: bold; margin-bottom: 6px; }
+        .header p  { font-size: 0.9em; opacity: 0.85; }
 
+        /* ── STUDENT INFO ── */
         .student-info { background: #f8f9fa; padding: 20px; border-bottom: 3px solid #e9ecef; }
-        
-        .info-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 20px; 
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .info-card {
-            background: white; padding: 15px; border-radius: 10px;
-            border-left: 4px solid #007bff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .info-card h3 { font-size: 0.8em; text-transform: uppercase; color: #343a40; margin-bottom: 5px; }
-        .info-card p { color: #007bff; font-size: 1.1em; font-weight: bold; }
+        .info-card p  { color: #007bff; font-size: 1.1em; font-weight: bold; }
 
-        .summary-cards { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
+        /* ── SUMMARY CARDS ── */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
+        /* Always 3 columns on all screen sizes */
 
         .summary-card {
-            background: white; padding: 12px 8px; border-radius: 10px;
-            text-align: center; border: 2px solid #e9ecef;
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        .summary-card h4    { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
+        .summary-card .value{ font-size: 1.3em; font-weight: bold; }
+
+        /* Dynamic borders & value colors */
+        .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+        .summary-card.moyenne .value { color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+
+        .summary-card.credit  { border-color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
+        .summary-card.credit  .value { color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
+
+        .summary-card.decision{ border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.decision .value {
+            font-size: 1em;
+            color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %};
         }
 
-        /* BORDURES DYNAMIQUES */
-        .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
-        .summary-card.decision { border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
-        .summary-card.credit { border-color: {% if note.Credit_total == 30  %}#28a745{% else %}#dc3545{% endif %}; }
-        .summary-card .value { font-size: 1.2em; font-weight: bold; }
-
+        /* ── CONTENT ── */
         .content { padding: 20px 15px; }
 
-        .department { margin-bottom: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        .dept-header {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-            color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 10px;
+        /* ── DEPARTMENT ── */
+        .department {
+            margin-bottom: 25px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .table-container { overflow-x: auto; width: 100%; }
+        .dept-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dept-name { font-size: 1em; font-weight: bold; }
+
+        /* Badges MOY + DÉC */
+        .dept-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+        .badge-moy      { background: rgba(255,255,255,0.18); color: white; }
+        .badge-dec-v    { background: #d4edda; color: #155724; }
+        .badge-dec-nv   { background: #f8d7da; color: #721c24; }
+        .badge-dec-c    { background: #fff3cd; color: #856404; }
+
+        /* ── TABLE ── */
+        .table-container { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+
+        /* Scroll hint — hidden on desktop, shown on mobile */
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.7em;
+            color: #adb5bd;
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
         table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
-        th { background: #f8f9fa; padding: 12px 8px; font-size: 0.75em; text-transform: uppercase; border-bottom: 2px solid #dee2e6; color: #333; }
+        th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #dee2e6;
+            color: #333;
+            white-space: nowrap;
+        }
         td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; }
-        
+        tr:last-child td { border-bottom: none; }
+
         .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
 
-        /* BADGES DÉCISION */
-        .decision-badge { font-weight: bold; padding: 4px 8px; border-radius: 5px; font-size: 0.75em; display: inline-block; min-width: 35px; }
-        .V, .C { background: #d4edda; color: #155724; }
+        /* Decision badges in table */
+        .decision-badge {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            display: inline-block;
+            min-width: 35px;
+        }
+        .V, .C   { background: #d4edda; color: #155724; }
         .CI, .CE { background: #fff3cd; color: #856404; }
         .NC, .NV { background: #f8d7da; color: #721c24; }
 
+        /* ── RESPONSIVE ── */
         @media (max-width: 600px) {
-            .summary-cards { grid-template-columns: 1fr; }
             .dept-header { flex-direction: column; text-align: center; }
+            .scroll-hint { display: block; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+
+        <!-- HEADER -->
         <div class="header">
-            <h1>Relevé de Notes - SUPNUM</h1>
-            <p>Année Universitaire 2024-2025</p>
+            <h1>Relevé de Notes - Semestre 1</h1>
+            <p>SUPNUM • Année 2024-2025</p>
         </div>
 
+        <!-- STUDENT INFO -->
         <div class="student-info">
             <div class="info-grid">
                 <div class="info-card"><h3>Étudiant</h3><p>{{ note.Prenom }} {{ note.Nom }}</p></div>
                 <div class="info-card"><h3>Matricule</h3><p>{{ note.Matricule }}</p></div>
                 <div class="info-card"><h3>Département</h3><p>{{ note.Dept }}</p></div>
             </div>
-
             <div class="summary-cards">
                 <div class="summary-card moyenne">
                     <h4>Moyenne</h4>
@@ -126,11 +206,17 @@
             </div>
         </div>
 
+        <!-- CONTENT -->
         <div class="content">
+
+            <!-- DPR1 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DPR1: Développement personnel</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE1 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE1 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -144,12 +230,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- MAI1 -->
             <div class="department">
                 <div class="dept-header">
-                    <div class="dept-name">MAI1: Outils mathématiques</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE2 }}</span></div>
+                    <div class="dept-name">MAI1: Outils mathématiques et informatiques</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE2 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -158,17 +249,22 @@
                         </thead>
                         <tbody>
                             <tr><td class="subject-name">Algèbre</td><td>{{ note.NCC_MAI110 }}</td><td>{{ note.NSN_MAI110 }}</td><td>{{ note.NSR_MAI110|default:"0.00" }}</td><td>{{ note.Moy_MAI110 }}</td><td><span class="decision-badge {{ note.Capit_MAI110 }}">{{ note.Capit_MAI110 }}</span></td></tr>
-                            <tr><td class="subject-name">Analyse </td><td>{{ note.NCC_MAI111 }}</td><td>{{ note.NSN_MAI111 }}</td><td>{{ note.NSR_MAI111|default:"0.00" }}</td><td>{{ note.Moy_MAI111 }}</td><td><span class="decision-badge {{ note.Capit_MAI111 }}">{{ note.Capit_MAI111 }}</span></td></tr>
+                            <tr><td class="subject-name">Analyse</td><td>{{ note.NCC_MAI111 }}</td><td>{{ note.NSN_MAI111 }}</td><td>{{ note.NSR_MAI111|default:"0.00" }}</td><td>{{ note.Moy_MAI111 }}</td><td><span class="decision-badge {{ note.Capit_MAI111 }}">{{ note.Capit_MAI111 }}</span></td></tr>
                             <tr><td class="subject-name">Pix</td><td>{{ note.NCC_MAI112 }}</td><td>{{ note.NSN_MAI112 }}</td><td>{{ note.NSR_MAI112|default:"0.00" }}</td><td>{{ note.Moy_MAI112 }}</td><td><span class="decision-badge {{ note.Capit_MAI112 }}">{{ note.Capit_MAI112 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- DEV1 -->
             <div class="department">
                 <div class="dept-header">
-                    <div class="dept-name">DEV1: Programmation & BD</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE3 }}</span></div>
+                    <div class="dept-name">DEV1: Programmation &amp; BD</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE3 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -182,12 +278,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- SYR1 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">SYR1: Systèmes et Réseaux</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE4 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE4 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -200,8 +301,10 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
-        </div> 
+
+        </div>
     </div>
 </body>
 </html>
