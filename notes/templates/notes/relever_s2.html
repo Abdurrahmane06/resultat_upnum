@@ -62,8 +62,9 @@
         }
 
         /* BORDURES DYNAMIQUES SELON LA MOYENNE */
-        .summary-card.moyenne { border-color: {% if note.moy_general < 10 %}#dc3545{% else %}#28a745{% endif %}; }
-        .summary-card.decision { border-color: {% if note.decision == 'Admis(e)' or note.decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+        .summary-card.credit { border-color: {% if note.Credit_total < 30 %}#dc3545{% else %}#28a745{% endif %}; }       
+        .summary-card.decision { border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
         .summary-card .value { font-size: 1.2em; font-weight: bold; }
 
         .content { padding: 20px 15px; }
@@ -84,7 +85,7 @@
         .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
 
         /* BADGES DE DÉCISION */
-        .decision { font-weight: bold; padding: 4px 8px; border-radius: 5px; font-size: 0.75em; display: inline-block; min-width: 35px; }
+        .decision-badge { font-weight: bold; padding: 4px 8px; border-radius: 5px; font-size: 0.75em; display: inline-block; min-width: 35px; }
         .V, .C { background: #d4edda; color: #155724; }
         .CI, .CE { background: #fff3cd; color: #856404; }
         .NC, .NV { background: #f8d7da; color: #721c24; }
@@ -104,23 +105,23 @@
 
         <div class="student-info">
             <div class="info-grid">
-                <div class="info-card"><h3>Étudiant</h3><p>{{ note.prenom }} {{ note.nom }}</p></div>
-                <div class="info-card"><h3>Matricule</h3><p>{{ note.matricule }}</p></div>
-                <div class="info-card"><h3>Département</h3><p>{{ note.dept }}</p></div>
+                <div class="info-card"><h3>Étudiant</h3><p>{{ note.Prenom }} {{ note.Nom }}</p></div>
+                <div class="info-card"><h3>Matricule</h3><p>{{ note.Matricule }}</p></div>
+                <div class="info-card"><h3>Département</h3><p>{{ note.Dept }}</p></div>
             </div>
 
             <div class="summary-cards">
                 <div class="summary-card moyenne">
                     <h4>Moyenne</h4>
-                    <div class="value">{{ note.moy_general }}</div>
+                    <div class="value">{{ note.Moy_General }}</div>
                 </div>
-                <div class="summary-card">
+                <div class="summary-card credit">
                     <h4>Crédits</h4>
-                    <div class="value">{{ note.credit_total }}</div>
+                    <div class="value">{{ note.Credit_total }}</div>
                 </div>
                 <div class="summary-card decision">
                     <h4>Décision</h4>
-                    <div class="value">{{ note.decision }}</div>
+                    <div class="value">{{ note.Decision }}</div>
                 </div>
             </div>
         </div>
@@ -129,7 +130,7 @@
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DPR2: Développement personnel 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue1 }}</span> | <span>DÉC: {{ note.ue1_valide }}</span></div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE1 }}</span></div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -137,9 +138,9 @@
                             <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="subject-name">Français</td><td>{{ note.ncc_dpr210 }}</td><td>{{ note.nsn_dpr210 }}</td><td>{{ note.nsr_dpr210|default:"0.00" }}</td><td>{{ note.moy_dpr210 }}</td><td><span class="decision {{ note.capit_pr210 }}">{{ note.capit_pr210 }}</span></td></tr>
-                            <tr><td class="subject-name">Anglais</td><td>{{ note.ncc_dpr211 }}</td><td>{{ note.nsn_dpr211 }}</td><td>{{ note.nsr_dpr211|default:"0.00" }}</td><td>{{ note.moy_dpr211 }}</td><td><span class="decision {{ note.capit_dpr211 }}">{{ note.capit_dpr211 }}</span></td></tr>
-                            <tr><td class="subject-name">PPP</td><td>{{ note.ncc_dpr212 }}</td><td>{{ note.nsn_dpr212 }}</td><td>{{ note.nsr_dpr212|default:"0.00" }}</td><td>{{ note.moy_dpr212 }}</td><td><span class="decision {{ note.capit_dpr212 }}">{{ note.capit_dpr212 }}</span></td></tr>
+                            <tr><td class="subject-name">Français</td><td>{{ note.NCC_DPR210 }}</td><td>{{ note.NSN_DPR210 }}</td><td>{{ note.NSR_DPR210|default:"0.00" }}</td><td>{{ note.Moy_DPR210 }}</td><td><span class="decision-badge {{ note.Capit_PR210 }}">{{ note.Capit_PR210 }}</span></td></tr>
+                            <tr><td class="subject-name">Anglais</td><td>{{ note.NCC_DPR211 }}</td><td>{{ note.NSN_DPR211 }}</td><td>{{ note.NSR_DPR211|default:"0.00" }}</td><td>{{ note.Moy_DPR211 }}</td><td><span class="decision-badge {{ note.Capit_DPR211 }}">{{ note.Capit_DPR211 }}</span></td></tr>
+                            <tr><td class="subject-name">PPP</td><td>{{ note.NCC_DPR212 }}</td><td>{{ note.NSN_DPR212 }}</td><td>{{ note.NSR_DPR212|default:"0.00" }}</td><td>{{ note.Moy_DPR212 }}</td><td><span class="decision-badge {{ note.Capit_DPR212 }}">{{ note.Capit_DPR212 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -148,7 +149,7 @@
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DEV2: Programmation et Développement 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue2 }}</span> | <span>DÉC: {{ note.ue2_valide }}</span></div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE2 }}</span></div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -156,8 +157,8 @@
                             <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="subject-name">Python</td><td>{{ note.ncc_dev210 }}</td><td>{{ note.nsn_dev210 }}</td><td>{{ note.nsr_dev210|default:"0.00" }}</td><td>{{ note.moy_dev210 }}</td><td><span class="decision {{ note.capit_dev210 }}">{{ note.capit_dev210 }}</span></td></tr>
-                            <tr><td class="subject-name">Langage Web</td><td>{{ note.ncc_dev211 }}</td><td>{{ note.nsn_dev211 }}</td><td>{{ note.nsr_dev211|default:"0.00" }}</td><td>{{ note.moy_dev211 }}</td><td><span class="decision {{ note.capit_dev211 }}">{{ note.capit_dev211 }}</span></td></tr>
+                            <tr><td class="subject-name">Python</td><td>{{ note.NCC_DEV210 }}</td><td>{{ note.NSN_DEV210 }}</td><td>{{ note.NSR_DEV210|default:"0.00" }}</td><td>{{ note.Moy_DEV210 }}</td><td><span class="decision-badge {{ note.Capit_DEV210 }}">{{ note.Capit_DEV210 }}</span></td></tr>
+                            <tr><td class="subject-name">Langage Web</td><td>{{ note.NCC_DEV211 }}</td><td>{{ note.NSN_DEV211 }}</td><td>{{ note.NSR_DEV211|default:"0.00" }}</td><td>{{ note.Moy_DEV211 }}</td><td><span class="decision-badge {{ note.Capit_DEV211 }}">{{ note.Capit_DEV211 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -166,7 +167,7 @@
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">MAI2: Outils Mathématiques 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue3 }}</span> | <span>DÉC: {{ note.ue3_valide }}</span></div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE3 }}</span></div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -174,9 +175,8 @@
                             <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="subject-name">Algèbre</td><td>{{ note.ncc_mai210 }}</td><td>{{ note.nsn_mai210 }}</td><td>{{ note.nsr_mai210|default:"0.00" }}</td><td>{{ note.moy_mai210 }}</td><td><span class="decision {{ note.capit_mai210 }}">{{ note.capit_mai210 }}</span></td></tr>
-                            <tr><td class="subject-name">Probabilités</td><td>{{ note.ncc_mai211 }}</td><td>{{ note.nsn_mai211 }}</td><td>{{ note.nsr_mai211|default:"0.00" }}</td><td>{{ note.moy_mai211 }}</td><td><span class="decision {{ note.capit_mai211 }}">{{ note.capit_mai211 }}</span></td></tr>
-                            <tr><td class="subject-name">Pix</td><td>{{ note.ncc_mai212 }}</td><td>{{ note.nsn_mai212 }}</td><td>{{ note.nsr_mai212|default:"0.00" }}</td><td>{{ note.moy_mai212 }}</td><td><span class="decision {{ note.capit_mai212 }}">{{ note.capit_mai212 }}</span></td></tr>
+                            <tr><td class="subject-name">Algèbre</td><td>{{ note.NCC_MAI210 }}</td><td>{{ note.NSN_MAI210 }}</td><td>{{ note.NSR_MAI210|default:"0.00" }}</td><td>{{ note.Moy_MAI210 }}</td><td><span class="decision-badge {{ note.Capit_MAI210 }}">{{ note.Capit_MAI210 }}</span></td></tr>
+                            <tr><td class="subject-name">Probabilités</td><td>{{ note.NCC_MAI211 }}</td><td>{{ note.NSN_MAI211 }}</td><td>{{ note.NSR_MAI211|default:"0.00" }}</td><td>{{ note.Moy_MAI211 }}</td><td><span class="decision-badge {{ note.Capit_MAI211 }}">{{ note.Capit_MAI211 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -185,7 +185,7 @@
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">SYR2: Architecture et Systèmes</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue4 }}</span> | <span>DÉC: {{ note.ue4_valide }}</span></div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE4 }}</span></div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -193,8 +193,8 @@
                             <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="subject-name">Système Logique</td><td>{{ note.ncc_syr210 }}</td><td>{{ note.nsn_syr210 }}</td><td>{{ note.nsr_syr210|default:"0.00" }}</td><td>{{ note.moy_syr210 }}</td><td><span class="decision {{ note.capit_syr210 }}">{{ note.capit_syr210 }}</span></td></tr>
-                            <tr><td class="subject-name">Système d'exploitation</td><td>{{ note.ncc_syr211 }}</td><td>{{ note.nsn_syr211 }}</td><td>{{ note.nsr_syr211|default:"0.00" }}</td><td>{{ note.moy_syr211 }}</td><td><span class="decision {{ note.capit_syr211 }}">{{ note.capit_syr211 }}</span></td></tr>
+                            <tr><td class="subject-name">Système Logique</td><td>{{ note.NCC_SYR210 }}</td><td>{{ note.NSN_SYR210 }}</td><td>{{ note.NSR_SYR210|default:"0.00" }}</td><td>{{ note.Moy_SYR210 }}</td><td><span class="decision-badge {{ note.Capit_SYR210 }}">{{ note.Capit_SYR210 }}</span></td></tr>
+                            <tr><td class="subject-name">Système d'exploitation</td><td>{{ note.NCC_SYR211 }}</td><td>{{ note.NSN_SYR211 }}</td><td>{{ note.NSR_SYR211|default:"0.00" }}</td><td>{{ note.Moy_SYR211 }}</td><td><span class="decision-badge {{ note.Capit_SYR211 }}">{{ note.Capit_SYR211 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -203,7 +203,7 @@
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DSI2: Module de spécialité</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.moyenne_ue5 }}</span> | <span>DÉC: {{ note.ue5_valide }}</span></div>
+                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE5 }}</span></div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -211,8 +211,8 @@
                             <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td class="subject-name">SGBD/Réseaux/CNM</td><td>{{ note.ncc_dsi210 }}</td><td>{{ note.nsn_dsi210 }}</td><td>{{ note.nsr_dsi210|default:"0.00" }}</td><td>{{ note.moy_dsi210 }}</td><td><span class="decision {{ note.capit_dsi210 }}">{{ note.capit_dsi210 }}</span></td></tr>
-                            <tr><td class="subject-name">Projet Intégrateur</td><td>{{ note.ncc_dsi211 }}</td><td>{{ note.nsn_dsi211 }}</td><td>{{ note.nsr_dsi211|default:"0.00" }}</td><td>{{ note.moy_dsi211 }}</td><td><span class="decision {{ note.capit_dsi211 }}">{{ note.capit_dsi211 }}</span></td></tr>
+                            <tr><td class="subject-name">SGBD/Réseaux/CNM</td><td>{{ note.NCC_DSI210 }}</td><td>{{ note.NSN_DSI210 }}</td><td>{{ note.NSR_DSI210|default:"0.00" }}</td><td>{{ note.Moy_DSI210 }}</td><td><span class="decision-badge {{ note.Capit_DSI210 }}">{{ note.Capit_DSI210 }}</span></td></tr>
+                            <tr><td class="subject-name">Projet Intégrateur</td><td>{{ note.NCC_DSI211 }}</td><td>{{ note.NSN_DSI211 }}</td><td>{{ note.NSR_DSI211|default:"0.00" }}</td><td>{{ note.Moy_DSI211 }}</td><td><span class="decision-badge {{ note.Capit_DSI211 }}">{{ note.Capit_DSI211 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
