@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relevé de Notes S2 - SUPNUM</title>
-       <style>
+    <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -62,7 +62,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
-        /* Always 3 columns on all screen sizes */
 
         .summary-card {
             background: white;
@@ -71,8 +70,8 @@
             text-align: center;
             border: 2px solid #e9ecef;
         }
-        .summary-card h4    { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
-        .summary-card .value{ font-size: 1.3em; font-weight: bold; }
+        .summary-card h4     { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
+        .summary-card .value { font-size: 1.3em; font-weight: bold; }
 
         /* Dynamic borders & value colors */
         .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
@@ -81,7 +80,7 @@
         .summary-card.credit  { border-color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
         .summary-card.credit  .value { color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
 
-        .summary-card.decision{ border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.decision { border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
         .summary-card.decision .value {
             font-size: 1em;
             color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %};
@@ -120,15 +119,14 @@
             font-size: 0.75em;
             font-weight: bold;
         }
-        .badge-moy      { background: rgba(255,255,255,0.18); color: white; }
-        .badge-dec-v    { background: #d4edda; color: #155724; }
-        .badge-dec-nv   { background: #f8d7da; color: #721c24; }
-        .badge-dec-c    { background: #fff3cd; color: #856404; }
+        .badge-moy    { background: rgba(255,255,255,0.18); color: white; }
+        .badge-dec-v  { background: #d4edda; color: #155724; }
+        .badge-dec-nv { background: #f8d7da; color: #721c24; }
+        .badge-dec-c  { background: #fff3cd; color: #856404; }
 
         /* ── TABLE ── */
         .table-container { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
 
-        /* Scroll hint — hidden on desktop, shown on mobile */
         .scroll-hint {
             display: none;
             text-align: center;
@@ -154,7 +152,6 @@
 
         .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
 
-        /* Decision badges in table */
         .decision-badge {
             font-weight: bold;
             padding: 4px 8px;
@@ -176,18 +173,20 @@
 </head>
 <body>
     <div class="container">
+
+        <!-- HEADER -->
         <div class="header">
             <h1>Relevé de Notes - Semestre 2</h1>
             <p>SUPNUM • Année 2024-2025</p>
         </div>
 
+        <!-- STUDENT INFO -->
         <div class="student-info">
             <div class="info-grid">
                 <div class="info-card"><h3>Étudiant</h3><p>{{ note.Prenom }} {{ note.Nom }}</p></div>
                 <div class="info-card"><h3>Matricule</h3><p>{{ note.Matricule }}</p></div>
                 <div class="info-card"><h3>Département</h3><p>{{ note.Dept }}</p></div>
             </div>
-
             <div class="summary-cards">
                 <div class="summary-card moyenne">
                     <h4>Moyenne</h4>
@@ -204,11 +203,17 @@
             </div>
         </div>
 
+        <!-- CONTENT -->
         <div class="content">
+
+            <!-- DPR2 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DPR2: Développement personnel 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE1 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE1 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -222,12 +227,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- DEV2 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DEV2: Programmation et Développement 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE2 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE2 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -240,12 +250,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- MAI2 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">MAI2: Outils Mathématiques 2</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE3 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE3 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -258,12 +273,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- SYR2 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">SYR2: Architecture et Systèmes</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE4 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE4 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -276,12 +296,17 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- DSI2 -->
             <div class="department">
                 <div class="dept-header">
                     <div class="dept-name">DSI2: Module de spécialité</div>
-                    <div class="dept-summary"><span>MOY UE: {{ note.MOYENNE_UE5 }}</span></div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE5 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
@@ -294,8 +319,10 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
-        </div> 
+
+        </div>
     </div>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relevé de Notes S4 - SUPNUM</title>
-       <style>
+    <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -62,7 +62,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
-        /* Always 3 columns on all screen sizes */
 
         .summary-card {
             background: white;
@@ -71,17 +70,16 @@
             text-align: center;
             border: 2px solid #e9ecef;
         }
-        .summary-card h4    { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
-        .summary-card .value{ font-size: 1.3em; font-weight: bold; }
+        .summary-card h4     { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
+        .summary-card .value { font-size: 1.3em; font-weight: bold; }
 
-        /* Dynamic borders & value colors */
         .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
         .summary-card.moyenne .value { color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
 
         .summary-card.credit  { border-color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
         .summary-card.credit  .value { color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
 
-        .summary-card.decision{ border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.decision { border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
         .summary-card.decision .value {
             font-size: 1em;
             color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %};
@@ -110,7 +108,6 @@
         }
         .dept-name { font-size: 1em; font-weight: bold; }
 
-        /* Badges MOY + DÉC */
         .dept-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
         .badge {
@@ -120,15 +117,14 @@
             font-size: 0.75em;
             font-weight: bold;
         }
-        .badge-moy      { background: rgba(255,255,255,0.18); color: white; }
-        .badge-dec-v    { background: #d4edda; color: #155724; }
-        .badge-dec-nv   { background: #f8d7da; color: #721c24; }
-        .badge-dec-c    { background: #fff3cd; color: #856404; }
+        .badge-moy    { background: rgba(255,255,255,0.18); color: white; }
+        .badge-dec-v  { background: #d4edda; color: #155724; }
+        .badge-dec-nv { background: #f8d7da; color: #721c24; }
+        .badge-dec-c  { background: #fff3cd; color: #856404; }
 
         /* ── TABLE ── */
         .table-container { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
 
-        /* Scroll hint — hidden on desktop, shown on mobile */
         .scroll-hint {
             display: none;
             text-align: center;
@@ -154,7 +150,6 @@
 
         .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
 
-        /* Decision badges in table */
         .decision-badge {
             font-weight: bold;
             padding: 4px 8px;
@@ -176,11 +171,14 @@
 </head>
 <body>
     <div class="container">
+
+        <!-- HEADER -->
         <div class="header">
             <h1>Relevé de Notes - Semestre 4</h1>
             <p>SUPNUM • Année 2024-2025</p>
         </div>
 
+        <!-- STUDENT INFO -->
         <div class="student-info">
             <div class="info-grid">
                 <div class="info-card"><h3>Étudiant</h3><p>{{ note.Prenom }} {{ note.Nom }}</p></div>
@@ -188,136 +186,118 @@
                 <div class="info-card"><h3>Département</h3><p>{{ note.Dept }}</p></div>
             </div>
             <div class="summary-cards">
-                <div class="summary-card moyenne"><h4>Moyenne</h4><div class="value">{{ note.Moy_General }}</div></div>
-                <div class="summary-card credit"><h4>Crédits</h4><div class="value">{{ note.Credit_total }}</div></div>
-                <div class="summary-card decision"><h4>Décision</h4><div class="value">{{ note.Decision }}</div></div>
+                <div class="summary-card moyenne">
+                    <h4>Moyenne</h4>
+                    <div class="value">{{ note.Moy_General }}</div>
+                </div>
+                <div class="summary-card credit">
+                    <h4>Crédits</h4>
+                    <div class="value">{{ note.Credit_total }}</div>
+                </div>
+                <div class="summary-card decision">
+                    <h4>Décision</h4>
+                    <div class="value">{{ note.Decision }}</div>
+                </div>
             </div>
         </div>
 
+        <!-- CONTENT -->
         <div class="content">
+
+            <!-- DPR41 -->
             <div class="department">
                 <div class="dept-header">
-                    <div style="padding: 10px;">DPR41: Développement personnel</div>
-                    <div style="padding: 10px;">MOY UE: {{ note.MOYENNE_UE1 }}</div>
+                    <div class="dept-name">DPR41: Développement personnel</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE1 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>MATIÈRE</th><th>DEVOIR</th><th>EXAMEN</th><th>RATTRAPAGE</th><th>MOYENNE</th><th>DÉCISION</th></tr>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="subject-name">Français</td>
-                                <td>{{ note.NCC_DPR110 }}</td><td>{{ note.NSN_DPR110 }}</td><td>{{ note.NSR_DPR110|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_DPR110 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_DPR110 }}">{{ note.Capit_DPR110 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">Anglais</td>
-                                <td>{{ note.NCC_DPR111 }}</td><td>{{ note.NSN_DPR111 }}</td><td>{{ note.NSR_DPR111|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_DPR111 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_DPR111 }}">{{ note.Capit_DPR111 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">Droit Informatique</td>
-                                <td>{{ note.NCC_DPR112 }}</td><td>{{ note.NSN_DPR112 }}</td><td>{{ note.NSR_DPR112|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_DPR112 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_DPR112 }}">{{ note.Capit_DPR112 }}</span></td>
-                            </tr>
+                            <tr><td class="subject-name">Français</td><td>{{ note.NCC_DPR110 }}</td><td>{{ note.NSN_DPR110 }}</td><td>{{ note.NSR_DPR110|default:"0.00" }}</td><td>{{ note.Moy_DPR110 }}</td><td><span class="decision-badge {{ note.Capit_DPR110 }}">{{ note.Capit_DPR110 }}</span></td></tr>
+                            <tr><td class="subject-name">Anglais</td><td>{{ note.NCC_DPR111 }}</td><td>{{ note.NSN_DPR111 }}</td><td>{{ note.NSR_DPR111|default:"0.00" }}</td><td>{{ note.Moy_DPR111 }}</td><td><span class="decision-badge {{ note.Capit_DPR111 }}">{{ note.Capit_DPR111 }}</span></td></tr>
+                            <tr><td class="subject-name">Droit Informatique</td><td>{{ note.NCC_DPR112 }}</td><td>{{ note.NSN_DPR112 }}</td><td>{{ note.NSR_DPR112|default:"0.00" }}</td><td>{{ note.Moy_DPR112 }}</td><td><span class="decision-badge {{ note.Capit_DPR112 }}">{{ note.Capit_DPR112 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- PAV41 -->
             <div class="department">
                 <div class="dept-header">
-                    <div style="padding: 10px;">PAV41: Programmation Avancée</div>
-                    <div style="padding: 10px;">MOY UE: {{ note.MOYENNE_UE2 }}</div>
+                    <div class="dept-name">PAV41: Programmation Avancée</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE2 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>MATIÈRE</th><th>DEVOIR</th><th>EXAMEN</th><th>RATTRAPAGE</th><th>MOYENNE</th><th>DÉCISION</th></tr>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="subject-name">Intelligence Artificielle</td>
-                                <td>{{ note.NCC_MAI110 }}</td><td>{{ note.NSN_MAI110 }}</td><td>{{ note.NSR_MAI110|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_MAI110 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_MAI110 }}">{{ note.Capit_MAI110 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">JEE</td>
-                                <td>{{ note.NCC_MAI111 }}</td><td>{{ note.NSN_MAI111 }}</td><td>{{ note.NSR_MAI111|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_MAI111 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_MAI111 }}">{{ note.Capit_MAI111 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">Développement Mobile</td>
-                                <td>{{ note.NCC_MAI112 }}</td><td>{{ note.NSN_MAI112 }}</td><td>{{ note.NSR_MAI112|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_MAI112 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_MAI112 }}">{{ note.Capit_MAI112 }}</span></td>
-                            </tr>
+                            <tr><td class="subject-name">Intelligence Artificielle</td><td>{{ note.NCC_MAI110 }}</td><td>{{ note.NSN_MAI110 }}</td><td>{{ note.NSR_MAI110|default:"0.00" }}</td><td>{{ note.Moy_MAI110 }}</td><td><span class="decision-badge {{ note.Capit_MAI110 }}">{{ note.Capit_MAI110 }}</span></td></tr>
+                            <tr><td class="subject-name">JEE</td><td>{{ note.NCC_MAI111 }}</td><td>{{ note.NSN_MAI111 }}</td><td>{{ note.NSR_MAI111|default:"0.00" }}</td><td>{{ note.Moy_MAI111 }}</td><td><span class="decision-badge {{ note.Capit_MAI111 }}">{{ note.Capit_MAI111 }}</span></td></tr>
+                            <tr><td class="subject-name">Développement Mobile</td><td>{{ note.NCC_MAI112 }}</td><td>{{ note.NSN_MAI112 }}</td><td>{{ note.NSR_MAI112|default:"0.00" }}</td><td>{{ note.Moy_MAI112 }}</td><td><span class="decision-badge {{ note.Capit_MAI112 }}">{{ note.Capit_MAI112 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- Module de spécialité -->
             <div class="department">
                 <div class="dept-header">
-                    <div style="padding: 10px;">Module de spécialité</div>
-                    <div style="padding: 10px;">MOY UE: {{ note.MOYENNE_UE3 }}</div>
+                    <div class="dept-name">Module de spécialité</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE3 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>MATIÈRE</th><th>DEVOIR</th><th>EXAMEN</th><th>RATTRAPAGE</th><th>MOYENNE</th><th>DÉCISION</th></tr>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="subject-name">BD NoSQL\Sécurité\Infographie</td>
-                                <td>{{ note.NCC_Dev110 }}</td><td>{{ note.NSN_Dev110 }}</td><td>{{ note.NSR_Dev110|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_Dev110 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_Dev110 }}">{{ note.Capit_Dev110 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">Réseaux\Voix et IoIP\Reseaux</td>
-                                <td>{{ note.NCC_Dev111 }}</td><td>{{ note.NSN_Dev111 }}</td><td>{{ note.NSR_Dev111|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_Dev111 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_Dev111 }}">{{ note.Capit_Dev111 }}</span></td>
-                            </tr>
-                            <tr>
-                                <td class="subject-name">PI Avancé 2</td>
-                                <td>{{ note.NCC_Dev112 }}</td><td>{{ note.NSN_Dev112 }}</td><td>{{ note.NSR_Dev112|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_Dev112 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_Dev112 }}">{{ note.Capit_Dev112 }}</span></td>
-                            </tr>
+                            <tr><td class="subject-name">BD NoSQL\Sécurité\Infographie</td><td>{{ note.NCC_Dev110 }}</td><td>{{ note.NSN_Dev110 }}</td><td>{{ note.NSR_Dev110|default:"0.00" }}</td><td>{{ note.Moy_Dev110 }}</td><td><span class="decision-badge {{ note.Capit_Dev110 }}">{{ note.Capit_Dev110 }}</span></td></tr>
+                            <tr><td class="subject-name">Réseaux\Voix et IoIP\Reseaux</td><td>{{ note.NCC_Dev111 }}</td><td>{{ note.NSN_Dev111 }}</td><td>{{ note.NSR_Dev111|default:"0.00" }}</td><td>{{ note.Moy_Dev111 }}</td><td><span class="decision-badge {{ note.Capit_Dev111 }}">{{ note.Capit_Dev111 }}</span></td></tr>
+                            <tr><td class="subject-name">PI Avancé 2</td><td>{{ note.NCC_Dev112 }}</td><td>{{ note.NSN_Dev112 }}</td><td>{{ note.NSR_Dev112|default:"0.00" }}</td><td>{{ note.Moy_Dev112 }}</td><td><span class="decision-badge {{ note.Capit_Dev112 }}">{{ note.Capit_Dev112 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
 
+            <!-- STG41 -->
             <div class="department">
                 <div class="dept-header">
-                    <div style="padding: 10px;">STG41: Stage L2</div>
-                    <div style="padding: 10px;">MOY UE: {{ note.MOYENNE_UE4 }}</div>
+                    <div class="dept-name">STG41: Stage L2</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE4 }}</span>
+                        <span class="badge badge-dec-v">Déc: V</span>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>MATIÈRE</th><th>DEVOIR</th><th>EXAMEN</th><th>RATTRAPAGE</th><th>MOYENNE</th><th>DÉCISION</th></tr>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="subject-name">Stage</td>
-                                <td>{{ note.NCC_STG112 }}</td><td>{{ note.NSN_STG112 }}</td><td>{{ note.NSR_STG112|default:"0.00" }}</td>
-                                <td><b>{{ note.Moy_STG112 }}</b></td>
-                                <td><span class="decision-badge {{ note.Capit_STG112 }}">{{ note.Capit_STG112 }}</span></td>
-                            </tr>
+                            <tr><td class="subject-name">Stage</td><td>{{ note.NCC_STG112 }}</td><td>{{ note.NSN_STG112 }}</td><td>{{ note.NSR_STG112|default:"0.00" }}</td><td>{{ note.Moy_STG112 }}</td><td><span class="decision-badge {{ note.Capit_STG112 }}">{{ note.Capit_STG112 }}</span></td></tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
             </div>
+
         </div>
     </div>
 </body>
