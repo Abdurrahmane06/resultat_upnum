@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relevé de Notes S4 - SUPNUM</title>
-    <style>
+        <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -70,8 +70,8 @@
             text-align: center;
             border: 2px solid #e9ecef;
         }
-        .summary-card h4     { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
-        .summary-card .value { font-size: 1.3em; font-weight: bold; }
+        .summary-card h4    { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
+        .summary-card .value{ font-size: 1.3em; font-weight: bold; }
 
         .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
         .summary-card.moyenne .value { color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
@@ -79,7 +79,7 @@
         .summary-card.credit  { border-color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
         .summary-card.credit  .value { color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
 
-        .summary-card.decision { border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.decision{ border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
         .summary-card.decision .value {
             font-size: 1em;
             color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %};
@@ -117,10 +117,10 @@
             font-size: 0.75em;
             font-weight: bold;
         }
-        .badge-moy    { background: rgba(255,255,255,0.18); color: white; }
-        .badge-dec-v  { background: #d4edda; color: #155724; }
-        .badge-dec-nv { background: #f8d7da; color: #721c24; }
-        .badge-dec-c  { background: #fff3cd; color: #856404; }
+        .badge-moy      { background: rgba(255,255,255,0.18); color: white; }
+        .badge-dec-v    { background: #d4edda; color: #155724; }
+        .badge-dec-nv   { background: #f8d7da; color: #721c24; }
+        .badge-dec-c    { background: #fff3cd; color: #856404; }
 
         /* ── TABLE ── */
         .table-container { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
@@ -145,10 +145,10 @@
             color: #333;
             white-space: nowrap;
         }
-        td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; }
+        td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; color: #007bff; font-weight: bold; }
         tr:last-child td { border-bottom: none; }
 
-        .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; }
+        .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; color: #333; }
 
         .decision-badge {
             font-weight: bold;
@@ -166,6 +166,46 @@
         @media (max-width: 600px) {
             .dept-header { flex-direction: column; text-align: center; }
             .scroll-hint { display: block; }
+
+            /* ── Réduction espaces et textes sur mobile ── */
+            body { padding: 0; }
+            .container { border-radius: 0; margin: 0; }
+
+            /* Header plus compact */
+            .header { padding: 10px 12px; }
+            .header h1 { font-size: 1em; margin-bottom: 2px; }
+            .header p  { font-size: 0.75em; }
+
+            /* Info étudiant plus compact */
+            .student-info { padding: 8px 10px; }
+            .info-grid { gap: 6px; margin-bottom: 8px; }
+            .info-card { padding: 7px 10px; }
+            .info-card h3 { font-size: 0.65em; margin-bottom: 2px; }
+            .info-card p  { font-size: 0.88em; }
+
+            /* Summary cards plus compacts */
+            .summary-cards { gap: 5px; }
+            .summary-card { padding: 6px 4px; border-radius: 7px; }
+            .summary-card h4 { font-size: 0.58em; margin-bottom: 2px; }
+            .summary-card .value { font-size: 0.95em; }
+
+            /* Contenu plus compact */
+            .content { padding: 8px 8px 12px; }
+
+            /* Blocs UE plus compacts */
+            .department { margin-bottom: 8px; border-radius: 7px; }
+            .dept-header { padding: 8px 10px; gap: 4px; }
+            .dept-name { font-size: 0.82em; }
+            .badge { padding: 3px 8px; font-size: 0.65em; }
+
+            /* Tableau plus compact */
+            th { padding: 7px 5px; font-size: 0.65em; }
+            td { padding: 6px 5px; font-size: 0.75em; color: #007bff; font-weight: bold; }
+            .subject-name { padding-left: 8px; color: #333; font-weight: 500; }
+
+            .decision-badge { padding: 2px 5px; font-size: 0.65em; min-width: 25px; }
+
+            .scroll-hint { padding: 3px 8px; font-size: 0.62em; }
         }
     </style>
 </head>
