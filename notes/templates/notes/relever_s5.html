@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relevé de Notes - SUPNUM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin: 10px auto;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.6em; font-weight: bold; margin-bottom: 6px; }
+        .header p  { font-size: 0.9em; opacity: 0.85; }
+
+        /* ── STUDENT INFO ── */
+        .student-info { background: #f8f9fa; padding: 20px; border-bottom: 3px solid #e9ecef; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .info-card h3 { font-size: 0.8em; text-transform: uppercase; color: #343a40; margin-bottom: 5px; }
+        .info-card p  { color: #007bff; font-size: 1.1em; font-weight: bold; }
+
+        /* ── SUMMARY CARDS ── */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        .summary-card h4    { font-size: 0.72em; text-transform: uppercase; color: #6c757d; margin-bottom: 5px; }
+        .summary-card .value{ font-size: 1.3em; font-weight: bold; }
+
+        .summary-card.moyenne { border-color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+        .summary-card.moyenne .value { color: {% if note.Moy_General < 10 %}#dc3545{% else %}#28a745{% endif %}; }
+
+        .summary-card.credit  { border-color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
+        .summary-card.credit  .value { color: {% if note.Credit_total == 30 %}#17a2b8{% else %}#dc3545{% endif %}; }
+
+        .summary-card.decision{ border-color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %}; }
+        .summary-card.decision .value {
+            font-size: 1em;
+            color: {% if note.Decision == 'Admis(e)' or note.Decision == 'Compense' %}#28a745{% else %}#dc3545{% endif %};
+        }
+
+        /* ── CONTENT ── */
+        .content { padding: 20px 15px; }
+
+        /* ── DEPARTMENT ── */
+        .department {
+            margin-bottom: 25px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .dept-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .dept-name { font-size: 1em; font-weight: bold; }
+
+        .dept-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+        .badge-moy      { background: rgba(255,255,255,0.18); color: white; }
+        .badge-dec-v    { background: #d4edda; color: #155724; }
+        .badge-dec-nv   { background: #f8d7da; color: #721c24; }
+        .badge-dec-c    { background: #fff3cd; color: #856404; }
+
+        /* ── TABLE ── */
+        .table-container { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.7em;
+            color: #adb5bd;
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+        th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #dee2e6;
+            color: #333;
+            white-space: nowrap;
+        }
+        td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #dee2e6; font-size: 0.85em; color: #007bff; font-weight: bold; }
+        tr:last-child td { border-bottom: none; }
+
+        .subject-name { text-align: left; font-weight: 500; padding-left: 15px; width: 30%; color: #333; }
+
+        .decision-badge {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            display: inline-block;
+            min-width: 35px;
+        }
+        .V, .C   { background: #d4edda; color: #155724; }
+        .CI, .CE { background: #fff3cd; color: #856404; }
+        .NC, .NV { background: #f8d7da; color: #721c24; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .dept-header { flex-direction: column; text-align: center; }
+            .scroll-hint { display: block; }
+
+            /* ── Réduction espaces et textes sur mobile ── */
+            body { padding: 0; }
+            .container { border-radius: 0; margin: 0; }
+
+            /* Header plus compact */
+            .header { padding: 10px 12px; }
+            .header h1 { font-size: 1em; margin-bottom: 2px; }
+            .header p  { font-size: 0.75em; }
+
+            /* Info étudiant plus compact */
+            .student-info { padding: 8px 10px; }
+            .info-grid { gap: 6px; margin-bottom: 8px; }
+            .info-card { padding: 7px 10px; }
+            .info-card h3 { font-size: 0.65em; margin-bottom: 2px; }
+            .info-card p  { font-size: 0.88em; }
+
+            /* Summary cards plus compacts */
+            .summary-cards { gap: 5px; }
+            .summary-card { padding: 6px 4px; border-radius: 7px; }
+            .summary-card h4 { font-size: 0.58em; margin-bottom: 2px; }
+            .summary-card .value { font-size: 0.95em; }
+
+            /* Contenu plus compact */
+            .content { padding: 8px 8px 12px; }
+
+            /* Blocs UE plus compacts */
+            .department { margin-bottom: 8px; border-radius: 7px; }
+            .dept-header { padding: 8px 10px; gap: 4px; }
+            .dept-name { font-size: 0.82em; }
+            .badge { padding: 3px 8px; font-size: 0.65em; }
+
+            /* Tableau plus compact */
+            th { padding: 7px 5px; font-size: 0.65em; }
+            td { padding: 6px 5px; font-size: 0.75em; color: #007bff; font-weight: bold; }
+            .subject-name { padding-left: 8px; color: #333; font-weight: 500; }
+
+            .decision-badge { padding: 2px 5px; font-size: 0.65em; min-width: 25px; }
+
+            .scroll-hint { padding: 3px 8px; font-size: 0.62em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Relevé de Notes - Semestre 5</h1>
+            <p>SUPNUM • Année 2025-2026</p>
+        </div>
+
+        <!-- STUDENT INFO -->
+        <div class="student-info">
+            <div class="info-grid">
+                <div class="info-card"><h3>Étudiant</h3><p>{{ note.Prenom }} {{ note.Nom }}</p></div>
+                <div class="info-card"><h3>Matricule</h3><p>{{ note.Matricule }}</p></div>
+                <div class="info-card"><h3>Département</h3><p>{{ note.Dept }}</p></div>
+            </div>
+            <div class="summary-cards">
+                <div class="summary-card moyenne">
+                    <h4>Moyenne</h4>
+                    <div class="value">{{ note.Moy_General }}</div>
+                </div>
+                <div class="summary-card credit">
+                    <h4>Crédits</h4>
+                    <div class="value">{{ note.Credit_total }}</div>
+                </div>
+                <div class="summary-card decision">
+                    <h4>Décision</h4>
+                    <div class="value">{{ note.Decision }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- DPR1 -->
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">DPR1: Développement personnel</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE1 }}</span>
+                        <span class="badge badge-dec-v {{ note.UE1_Valide }}">Déc: {{ note.UE1_Valide }}</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Français</td><td>{{ note.NCC_DPR510 }}</td><td>{{ note.NSN_DPR510 }}</td><td>{{ note.NSR_DPR510|default:"0.00" }}</td><td>{{ note.Moy_DPR510 }}</td><td><span class="decision-badge {{ note.Capit_DPR510 }}">{{ note.Capit_DPR510 }}</span></td></tr>
+                            <tr><td class="subject-name">Anglais</td><td>{{ note.NCC_DPR511 }}</td><td>{{ note.NSN_DPR511 }}</td><td>{{ note.NSR_DPR511|default:"0.00" }}</td><td>{{ note.Moy_DPR511 }}</td><td><span class="decision-badge {{ note.Capit_DPR511 }}">{{ note.Capit_DPR511 }}</span></td></tr>
+                            <tr><td class="subject-name">Entrepreneuriat</td><td>{{ note.NCC_DPR512 }}</td><td>{{ note.NSN_DPR512 }}</td><td>{{ note.NSR_DPR512|default:"0.00" }}</td><td>{{ note.Moy_DPR512 }}</td><td><span class="decision-badge {{ note.Capit_DPR512 }}">{{ note.Capit_DPR512 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
+            </div>
+
+            <!-- MAI1 -->
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">MAI1: Big Data, Web Services & Cloud</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE2 }}</span>
+                        <span class="badge badge-dec-v {{ note.UE2_Valide }}">Déc: {{ note.UE2_Valide }}</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Architecture SOA & Webservices</td><td>{{ note.NCC_BWC510 }}</td><td>{{ note.NSN_BWC510 }}</td><td>{{ note.NSR_BWC510|default:"0.00" }}</td><td>{{ note.Moy_BWC510 }}</td><td><span class="decision-badge {{ note.Capit_BWC510 }}">{{ note.Capit_BWC510 }}</span></td></tr>
+                            <tr><td class="subject-name">Framework & technologies Big Data</td><td>{{ note.NCC_BWC511 }}</td><td>{{ note.NSN_BWC511 }}</td><td>{{ note.NSR_BWC511|default:"0.00" }}</td><td>{{ note.Moy_BWC511 }}</td><td><span class="decision-badge {{ note.Capit_BWC511 }}">{{ note.Capit_BWC511 }}</span></td></tr>
+                            <tr><td class="subject-name">Virtualisation & Cloud</td><td>{{ note.NCC_BWC512 }}</td><td>{{ note.NSN_BWC512 }}</td><td>{{ note.NSR_BWC512|default:"0.00" }}</td><td>{{ note.Moy_BWC512 }}</td><td><span class="decision-badge {{ note.Capit_BWC512 }}">{{ note.Capit_BWC512 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
+            </div>
+
+            <!-- DEV1 -->
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">DEV1: Préparation Certifications Numériques</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE3 }}</span>
+                        <span class="badge badge-dec-v {{ note.UE3_Valide }}">Déc: {{ note.UE3_Valide }}</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">JEE\Reseaux fixes\Indexation</td><td>{{ note.NCC_DSI510 }}</td><td>{{ note.NSN_DSI510 }}</td><td>{{ note.NSR_DSI510|default:"0.00" }}</td><td>{{ note.Moy_DSI510 }}</td><td><span class="decision-badge {{ note.Capit_DSI510 }}">{{ note.Capit_DSI510 }}</span></td></tr>
+                            <tr><td class="subject-name">Projet fin cursus</td><td>{{ note.NCC_DSI511 }}</td><td>{{ note.NSN_DSI511 }}</td><td>{{ note.NSR_DSI511|default:"0.00" }}</td><td>{{ note.Moy_DSI511 }}</td><td><span class="decision-badge {{ note.Capit_DSI511 }}">{{ note.Capit_DSI511 }}</span></td></tr>
+                            <tr><td class="subject-name">Gestion de projets Agiles</td><td>{{ note.NCC_DSI512 }}</td><td>{{ note.NSN_DSI512 }}</td><td>{{ note.NSR_DSI512|default:"0.00" }}</td><td>{{ note.Moy_DSI512 }}</td><td><span class="decision-badge {{ note.Capit_DSI512 }}">{{ note.Capit_DSI512 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
+            </div>
+
+            <!-- SYR1 -->
+            <div class="department">
+                <div class="dept-header">
+                    <div class="dept-name">Module de specialite</div>
+                    <div class="dept-badges">
+                        <span class="badge badge-moy">MOY: {{ note.MOYENNE_UE4 }}</span>
+                        <span class="badge badge-dec-v {{ note.UE4_Valide }}">Déc: {{ note.UE4_Valide }}</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Matière</th><th>Devoir</th><th>Examen</th><th>Rattrapage</th><th>Moyenne</th><th>Décision</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="subject-name">Oracle\CCNA\Adobe</td><td>{{ note.NCC_DSI520 }}</td><td>{{ note.NSN_DSI520 }}</td><td>{{ note.NSR_DSI520|default:"0.00" }}</td><td>{{ note.Moy_DSI520 }}</td><td><span class="decision-badge {{ note.Capit_DSI520 }}">{{ note.Capit_DSI520 }}</span></td></tr>
+                            <tr><td class="subject-name">Python</td><td>{{ note.NCC_DSI521 }}</td><td>{{ note.NSN_DSI521 }}</td><td>{{ note.NSR_DSI521|default:"0.00" }}</td><td>{{ note.Moy_DSI521 }}</td><td><span class="decision-badge {{ note.Capit_DSI521 }}">{{ note.Capit_DSI521 }}</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scroll-hint">← Faites défiler horizontalement pour voir toutes les colonnes →</div>
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+</body>
+</html>
