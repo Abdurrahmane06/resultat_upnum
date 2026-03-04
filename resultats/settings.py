@@ -121,15 +121,15 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Patch pour MariaDB 10.4
-from django.db.backends.mysql import base
+# # Patch pour MariaDB 10.4
+# from django.db.backends.mysql import base
 
-# Forcer la version à 10.6
-def patched_get_server_version(self):
-    return (10, 6, 0)
+# # Forcer la version à 10.6
+# def patched_get_server_version(self):
+#     return (10, 6, 0)
 
-base.DatabaseWrapper.get_server_version = patched_get_server_version
+# base.DatabaseWrapper.get_server_version = patched_get_server_version
 
-# Désactiver complètement la vérification de version
-from django.db.backends.mysql import features
-features.DatabaseFeatures.minimum_database_version = None
+# # Désactiver complètement la vérification de version
+# from django.db.backends.mysql import features
+# features.DatabaseFeatures.minimum_database_version = None
